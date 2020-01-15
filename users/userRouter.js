@@ -60,11 +60,32 @@ router.get('/:id/posts', validateUserId, validatePost, (req, res) => {
 });
 
 router.delete('/:id', validateUserId, (req, res) => {
-  // do your magic!
+  const id = req.params.id;
+  userDb.remove(id)
+  .then(deleted => {
+    res.status(200).json({
+      message: 'deletion successful', deleted
+    })
+  })
+  .catch(error => {
+    console.log(error);
+    res.status(500).json({
+      errorMessage: 'the user could not be removed.'
+    })
+  })
 });
 
 router.put('/:id', validateUserId, (req, res) => {
-  // do your magic!
+  const id = req.params.id;
+  userDb.update(id, body)
+  .then(info => {
+    res.status(200).json(info)
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: 'The informations could not be modified.'
+    })
+  })
 });
 
 //custom middleware
