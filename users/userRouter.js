@@ -10,7 +10,7 @@ router.post('/', validateUser, (req, res) => {
   const userInfo = req.body;
   userDb.insert(userInfo)
   .then(info => {
-    res.status(200).json(info);
+    res.status(201).json(info);
   })
   .catch(error => {
     console.log(error);
@@ -49,14 +49,31 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', validateUserId, (req, res) => {
-  userDb.get()
+  const id = req.params.id
+  userDb.getById(id)
   .then(info => {
     res.status(200).json(info)
   })
+  .catch(error => {
+    console.log(error);
+    res.status(500).json({
+      errorMessage: 'error retrieving user.'
+    })
+  })
 });
 
-router.get('/:id/posts', validateUserId, validatePost, (req, res) => {
-  const id = req.params.id
+router.get('/:id/posts', validateUserId, (req, res) => {
+  const id = req.params.id;
+  userDb.getUserPosts(id) 
+  .then(info => {
+    res.status(200).json(info)
+  })
+  .catch(errors => {
+    console.log(error);
+    res.status(500).json({
+      errorMessage: "The post information could not be retrieved."
+    })
+  })
 });
 
 router.delete('/:id', validateUserId, (req, res) => {
@@ -77,7 +94,8 @@ router.delete('/:id', validateUserId, (req, res) => {
 
 router.put('/:id', validateUserId, (req, res) => {
   const id = req.params.id;
-  userDb.update(id, body)
+  const userInfo = req.body
+  userDb.update(id, userInfo)
   .then(info => {
     res.status(200).json(info)
   })
